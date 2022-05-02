@@ -6,7 +6,7 @@ router
   .get((req, res) => {
     Thought.find({})
       .then((thoughts) => res.json(thoughts))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => console.log(err)); //res.status(500).json(err));
   })
   .post((req, res) => {
     Thought.create(req.body)
@@ -39,9 +39,31 @@ router
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: "No thought with that ID" })
-          : res.json({ message: "Thought and students deleted!" })
+          : res.json({ message: "Thought deleted!" })
       )
       .catch((err) => res.status(500).json(err));
   });
 
+router.route("/:thoughtId/reactions").post((req, res) => {
+  Thought.findOneAndUpdate(
+    { _id: req.params.thoughtId },
+    { $addToSet: { reactions: req.body } },
+    { runValidators: true, new: true }
+  )
+    .then((thought) =>
+      !thought
+        ? res.status(404).json({ message: "No thought with this id!" })
+        : res.json(thought)
+    )
+    .catch((err) => res.status(500).json(err));
+});
+
+router.route("/:thoughtId/reactions/:reactionId").delete((req, res) => {
+  Thought.findOneAndUpdate(
+    { _id: req.params.thoughtId },
+    { $pull: { reactions: { reactionId: req.params.reactionId } } }
+  )
+    .then((result) => res.status(200).json(result))
+    .catch((err) => res.status(500).json(err));
+});
 module.exports = router;

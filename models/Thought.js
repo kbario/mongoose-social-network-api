@@ -10,15 +10,13 @@ const reactionSchema = new Schema(
       required: true,
       maxlength: 280,
     },
-    username: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    username: {
+      type: String,
+      required: true,
+    },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: new Date(),
     },
   },
   {
@@ -40,7 +38,6 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: new Date(),
-      show: (time) => `${time.getDay()}/${time.getMonth()}/${time.getYear()}`,
     },
     username: {
       type: String,
@@ -55,6 +52,15 @@ const thoughtSchema = new Schema(
     id: false,
   }
 );
+
+thoughtSchema.virtual("timeCreated").get(function () {
+  const t = new Date(this.createdAt);
+  return `${t.getDate()}/${t.getMonth()}/${t.getFullYear()} at ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
+});
+
+thoughtSchema.virtual("reactionCount").get(function () {
+  return this.reactions.length;
+});
 
 const Thought = model("thought", thoughtSchema);
 
