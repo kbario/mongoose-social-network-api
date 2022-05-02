@@ -70,6 +70,7 @@ Below is a list of links to third-party assets that were used to create this pro
 - https://www.mongodb.com/
 - https://expressjs.com/
 - https://nodejs.dev/
+- https://chancejs.com/
 
 ## License
 Licensed under the [MIT](./LICENSE.txt) license.
